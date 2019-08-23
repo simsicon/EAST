@@ -200,17 +200,20 @@ def index_post():
     import io
     bio = io.BytesIO()
     request.files['image'].save(bio)
+    logger.info("request in ...")
     img = cv2.imdecode(np.frombuffer(bio.getvalue(), dtype='uint8'), 1)
+    logger.info("img encoded...")
     rst = get_predictor(checkpoint_path)(img)
-
     save_result(img, rst)
+    logger.info("predicted...")
+    logger.info(rst)
     return render_template('index.html', session_id=rst['session_id'])
 
 
 def main():
     global checkpoint_path
     parser = argparse.ArgumentParser()
-    parser.add_argument('--port', default=8769, type=int)
+    parser.add_argument('--port', default=8000, type=int)
     parser.add_argument('--checkpoint_path', default=checkpoint_path)
     args = parser.parse_args()
     checkpoint_path = args.checkpoint_path
@@ -219,7 +222,7 @@ def main():
         raise RuntimeError(
             'Checkpoint `{}` not found'.format(args.checkpoint_path))
 
-    app.debug = False  # change this to True if you want to debug
+    app.debug = True  # change this to True if you want to debug
     app.run('0.0.0.0', args.port)
 
 if __name__ == '__main__':

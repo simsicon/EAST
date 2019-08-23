@@ -1,0 +1,10 @@
+version: '2.3'
+
+services:
+  east:
+    container_name: east
+    image: "east:v1"
+    runtime: nvidia
+    ports:
+      - "8000:8000"
+    entrypoint: python3 run_demo_server.py
